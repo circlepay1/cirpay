@@ -1,26 +1,295 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ═══════════════════════════════════════
+   DARK THEME (default)
+═══════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
+  --bg-base:              #1A1A2E;
+  --bg-card:              #252540;
+  --bg-card-hover:        #2a2a4a;
+  --bg-sidebar:           #16162a;
+  --bg-input:             #1e1e38;
+  --bg-pill:              #2a2a4a;
+  --overlay:              rgba(0,0,0,0.65);
+  --border:               rgba(123,94,167,0.25);
+  --border-sidebar:       rgba(123,94,167,0.25);
+
+  --teal:                 #00C9B1;
+  --teal-dark:            #00A896;
+  --purple:               #7B5EA7;
+  --purple-ghost:         rgba(123,94,167,0.2);
+  --purple-ghost-border:  rgba(123,94,167,0.3);
+
+  --text-heading:         #FFFFFF;
+  --text-primary:         #FFFFFF;
+  --text-secondary:       #6B6B8A;
+  --text-muted:           #4a4a6a;
+  --text-on-pill:         #FFFFFF;
+  --text-positive:        #00C9B1;
+  --text-negative:        #FF6B8A;
+  --text-pending:         #F59E0B;
+
+  --card-shadow:          none;
+  --btn-primary-shadow:   none;
+
+  --card-gradient:        linear-gradient(135deg, #00897B, #00574F);
+  --card-gradient-text:   #FFFFFF;
+
+  /* Status badge colors */
+  --status-positive-bg:   rgba(0,201,177,0.15);
+  --status-positive-text: #00C9B1;
+  --status-negative-bg:   rgba(255,107,138,0.15);
+  --status-negative-text: #FF6B8A;
+  --status-pending-bg:    rgba(245,158,11,0.15);
+  --status-pending-text:  #F59E0B;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ═══════════════════════════════════════
+   LIGHT THEME
+═══════════════════════════════════════ */
+[data-theme="light"] {
+  --bg-base:              #EEEEF6;
+  --bg-card:              #FFFFFF;
+  --bg-card-hover:        #F4F4FA;
+  --bg-sidebar:           #FFFFFF;
+  --bg-input:             #F1F1F8;
+  --bg-pill:              #E4E4F0;
+  --overlay:              rgba(26,26,46,0.55);
+  --border:               #E4E4F0;
+  --border-sidebar:       #EDEDF5;
+
+  --teal:                 #00A896;
+  --teal-dark:            #008F7F;
+  --purple:               #6B4E96;
+  --purple-ghost:         rgba(123,94,167,0.12);
+  --purple-ghost-border:  rgba(123,94,167,0.35);
+
+  --text-heading:         #14142B;
+  --text-primary:         #1A1A2E;
+  --text-secondary:       #6B6B8A;
+  --text-muted:           #9A9AB5;
+  --text-on-pill:         #2B2B45;
+  --text-positive:        #00A896;
+  --text-negative:        #D64550;
+  --text-pending:         #C98A1F;
+
+  --card-shadow:          0 1px 3px rgba(26,26,46,0.06), 0 8px 24px rgba(26,26,46,0.04);
+  --btn-primary-shadow:   0 4px 12px rgba(0,168,150,0.25);
+
+  --card-gradient:        linear-gradient(135deg, #00A896, #006B61);
+  --card-gradient-text:   #FFFFFF;
+
+  /* Status badge colors */
+  --status-positive-bg:   rgba(0,168,150,0.12);
+  --status-positive-text: #00A896;
+  --status-negative-bg:   rgba(214,69,80,0.12);
+  --status-negative-text: #D64550;
+  --status-pending-bg:    rgba(201,138,31,0.12);
+  --status-pending-text:  #C98A1F;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ═══════════════════════════════════════
+   BASE
+═══════════════════════════════════════ */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  transition: background 0.25s, color 0.25s;
 }
+
+/* ═══════════════════════════════════════
+   TAILWIND OVERRIDE MAP
+   Maps hardcoded Tailwind classes → CSS vars
+   so theme toggle works without touching TSX files
+═══════════════════════════════════════ */
+
+/* Backgrounds */
+.bg-gray-950                      { background: var(--bg-sidebar)    !important; }
+.bg-gray-900                      { background: var(--bg-base)        !important; }
+.bg-gray-800                      { background: var(--bg-card)        !important; }
+.bg-gray-700                      { background: var(--bg-card-hover)  !important; }
+.bg-gray-700\/50,
+.hover\:bg-gray-700\/50:hover     { background: color-mix(in srgb, var(--bg-card-hover) 50%, transparent) !important; }
+.bg-gray-700\/40,
+.hover\:bg-gray-700\/40:hover     { background: color-mix(in srgb, var(--bg-card-hover) 40%, transparent) !important; }
+.bg-gray-700\/60                  { background: color-mix(in srgb, var(--bg-card-hover) 60%, transparent) !important; }
+
+/* Borders */
+.border-gray-700,
+.border-gray-800                  { border-color: var(--border) !important; }
+.divide-gray-700 > * + *          { border-color: var(--border) !important; }
+
+/* Text — CRITICAL: text-white must become text-heading in light mode */
+.text-white                       { color: var(--text-heading) !important; }
+/* card-gradient is always dark — children keep white text */
+.card-gradient .text-white        { color: #FFFFFF !important; }
+.text-gray-300                    { color: var(--text-primary)   !important; }
+.text-gray-400,
+.text-gray-500                    { color: var(--text-secondary) !important; }
+
+/* Indigo → teal/purple */
+.text-indigo-400,
+.text-indigo-300                  { color: var(--teal)   !important; }
+.bg-indigo-600                    { background: var(--teal)   !important; }
+.hover\:bg-indigo-500:hover       { background: var(--teal-dark) !important; }
+.border-indigo-500,
+.focus\:border-indigo-500:focus   { border-color: var(--teal)   !important; }
+.border-indigo-800                { border-color: var(--border)  !important; }
+.border-indigo-600                { border-color: var(--teal)    !important; }
+.border-indigo-700                { border-color: var(--border)  !important; }
+.bg-indigo-700                    { background: var(--purple)   !important; }
+.bg-indigo-900\/40                { background: color-mix(in srgb, var(--purple) 40%, transparent) !important; }
+.from-indigo-900                  { --tw-gradient-from: var(--purple) !important; }
+.to-gray-800                      { --tw-gradient-to: var(--bg-card)  !important; }
+.text-indigo-300.font-mono        { color: var(--teal) !important; }
+
+/* Status colors */
+.text-green-400                   { color: var(--text-positive) !important; }
+.text-red-400                     { color: var(--text-negative) !important; }
+.text-yellow-400                  { color: var(--text-pending)  !important; }
+
+/* Inputs */
+.bg-gray-700.border.border-gray-600 { background: var(--bg-input) !important; border-color: var(--border) !important; }
+
+/* ═══════════════════════════════════════
+   REUSABLE UTILITY CLASSES
+═══════════════════════════════════════ */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--card-shadow);
+}
+.card-hover:hover { background: var(--bg-card-hover); }
+
+/* Profile / Leaderboard gradient card — ALWAYS dark, text always white */
+.card-gradient {
+  background: var(--card-gradient) !important;
+  border: 1px solid transparent;
+  box-shadow: var(--card-shadow);
+}
+.card-gradient * { color: var(--card-gradient-text) !important; }
+/* Exception: buttons inside gradient card keep their own style */
+.card-gradient button { color: inherit !important; }
+
+/* Send Gift pill buttons */
+.gift-pill {
+  background: var(--bg-pill);
+  color: var(--text-on-pill);
+  transition: background 0.15s, color 0.15s;
+}
+.gift-pill:hover {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  color: #fff;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  box-shadow: var(--btn-primary-shadow);
+  color: #fff !important;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover    { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.45; }
+
+.btn-ghost {
+  background: var(--purple-ghost);
+  border: 1px solid var(--purple-ghost-border);
+  color: var(--purple) !important;
+  transition: background 0.15s;
+}
+.btn-ghost:hover    { background: rgba(123,94,167,0.22); }
+.btn-ghost:disabled { opacity: 0.45; }
+
+.btn-danger {
+  background: rgba(214,69,80,0.1);
+  border: 1px solid rgba(214,69,80,0.3);
+  color: var(--text-negative) !important;
+  transition: background 0.15s;
+}
+.btn-danger:hover { background: rgba(214,69,80,0.18); }
+
+.input-base {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  width: 100%;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input-base:focus        { border-color: var(--teal); }
+.input-base::placeholder { color: var(--text-muted); }
+
+.label { color: var(--text-secondary); font-size: 0.75rem; }
+
+.text-positive { color: var(--text-positive) !important; }
+.text-negative { color: var(--text-negative) !important; }
+.text-pending  { color: var(--text-pending)  !important; }
+
+.divider { border-color: var(--border); }
+
+.nav-active {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  color: #fff !important;
+}
+.nav-inactive           { color: var(--text-secondary); }
+.nav-inactive:hover     { background: var(--bg-input); color: var(--text-primary); }
+
+.badge-teal {
+  background: var(--status-positive-bg);
+  color: var(--status-positive-text);
+  border: 1px solid rgba(0,168,150,0.3);
+}
+.badge-purple {
+  background: var(--purple-ghost);
+  color: var(--purple);
+  border: 1px solid var(--purple-ghost-border);
+}
+
+/* ═══════════════════════════════════════
+   INPUT SPINNERS
+═══════════════════════════════════════ */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* ═══════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════ */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-card); }
+::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal); }
+
+/* ═══════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════ */
+@keyframes envelope-close {
+  0%   { transform: scaleY(1); }
+  100% { transform: scaleY(0.85); }
+}
+@keyframes envelope-fly {
+  0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+  30%  { transform: translate(60px,-40px) rotate(15deg) scale(1.1); opacity: 1; }
+  100% { transform: translate(400px,-200px) rotate(30deg) scale(0.3); opacity: 0; }
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(120px) rotate(720deg); opacity: 0; }
+}
+@keyframes success-pop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.envelope-closing { animation: envelope-close 0.3s ease-in-out forwards; }
+.envelope-flying  { animation: envelope-fly 0.8s ease-in forwards; }
+.success-pop      { animation: success-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.confetti-item    { animation: confetti-fall 1s ease-in forwards; }
