@@ -15,13 +15,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Mobile menu button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg"
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 rounded-lg"
         style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
       >
         <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
+          {sidebarOpen ? (
+            <>
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </>
+          ) : (
+            <>
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </>
+          )}
         </svg>
       </button>
 
