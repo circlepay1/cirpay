@@ -90,18 +90,18 @@ export default function HistoryPage() {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Transaction History</h1>
-            <p style={{ color: 'var(--text-secondary)' }} className="text-sm">All activities</p>
+        <div className="mb-4">
+          <div className="mb-3">
+            <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Transaction History</h1>
+            <p style={{ color: 'var(--text-secondary)' }} className="text-xs sm:text-sm">All activities</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             {/* Direction filter */}
             <select
               value={dirFilter}
               onChange={(e) => handleDirFilter(e.target.value as typeof dirFilter)}
-              className="text-white text-sm rounded-lg px-3 py-2 focus:outline-none cursor-pointer"
-              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+              className="text-sm rounded-lg px-3 py-2 focus:outline-none cursor-pointer flex-1 sm:flex-none"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
             >
               <option value="all">All</option>
               <option value="in">Received</option>
@@ -111,8 +111,8 @@ export default function HistoryPage() {
             <select
               value={typeFilter}
               onChange={(e) => handleTypeFilter(e.target.value as typeof typeFilter)}
-              className="text-white text-sm rounded-lg px-3 py-2 focus:outline-none cursor-pointer"
-              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+              className="text-sm rounded-lg px-3 py-2 focus:outline-none cursor-pointer flex-1 sm:flex-none"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
             >
               <option value="all">All Categories</option>
               <option value="gift">🎁 Gift</option>

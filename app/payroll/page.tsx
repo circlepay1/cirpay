@@ -99,20 +99,20 @@ export default function PayrollPage() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-4">
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Payroll</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Payroll</h1>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4">
           {[
             { label: 'Total employees', value: employees.length },
             { label: 'Total amount', value: `$${total.toLocaleString()}` },
             { label: 'Approved', value: approved, color: 'var(--text-positive)' },
             { label: 'Pending', value: pending, color: '#FACC15' },
           ].map((s) => (
-            <div key={s.label} className="card rounded-xl p-4">
+            <div key={s.label} className="card rounded-xl p-3 sm:p-4">
               <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>{s.label}</p>
-              <p className="text-2xl font-bold" style={{ color: s.color || 'var(--text-primary)' }}>{s.value}</p>
+              <p className="text-lg sm:text-2xl font-bold" style={{ color: s.color || 'var(--text-primary)' }}>{s.value}</p>
             </div>
           ))}
         </div>
@@ -172,11 +172,11 @@ export default function PayrollPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button onClick={openAdd} className="btn-primary px-4 py-2.5 text-sm font-medium rounded-lg">
             + Add Employee
           </button>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:ml-auto">
             <button
               onClick={() => setPreview(true)}
               disabled={validEmployees.length === 0}
