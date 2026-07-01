@@ -147,7 +147,7 @@ export default function ProfilePage() {
                   <div className="min-w-0">
                     <p className="text-white font-bold text-base sm:text-lg truncate">{username}</p>
                     <p className="text-xs sm:text-sm font-mono truncate" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                      {address.slice(0, 10)}...{address.slice(-8)}
+                      {address ? `${address.slice(0, 10)}...${address.slice(-8)}` : ''}
                     </p>
                   </div>
                 </div>
