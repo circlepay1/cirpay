@@ -14,14 +14,15 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  const [theme, setTheme] = useState<Theme>('light')
 
-  // On mount: read localStorage or system preference
+  // On mount: read localStorage or default to light
   useEffect(() => {
     const stored = localStorage.getItem('cirpay-theme') as Theme | null
     if (stored === 'light' || stored === 'dark') {
       setTheme(stored)
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    } else {
+      // Default to light theme
       setTheme('light')
     }
   }, [])

@@ -1,9 +1,52 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════
-   DARK THEME (default)
+   LIGHT THEME (default)
 ═══════════════════════════════════════ */
-:root,
+:root {
+  --bg-base:              #EEEEF6;
+  --bg-card:              #FFFFFF;
+  --bg-card-hover:        #F4F4FA;
+  --bg-sidebar:           #FFFFFF;
+  --bg-input:             #F1F1F8;
+  --bg-pill:              #E4E4F0;
+  --overlay:              rgba(26,26,46,0.55);
+  --border:               #E4E4F0;
+  --border-sidebar:       #EDEDF5;
+
+  --teal:                 #00A896;
+  --teal-dark:            #008F7F;
+  --purple:               #6B4E96;
+  --purple-ghost:         rgba(123,94,167,0.12);
+  --purple-ghost-border:  rgba(123,94,167,0.35);
+
+  --text-heading:         #14142B;
+  --text-primary:         #1A1A2E;
+  --text-secondary:       #6B6B8A;
+  --text-muted:           #9A9AB5;
+  --text-on-pill:         #2B2B45;
+  --text-positive:        #00A896;
+  --text-negative:        #D64550;
+  --text-pending:         #C98A1F;
+
+  --card-shadow:          0 1px 3px rgba(26,26,46,0.06), 0 8px 24px rgba(26,26,46,0.04);
+  --btn-primary-shadow:   0 4px 12px rgba(0,168,150,0.25);
+
+  --card-gradient:        linear-gradient(135deg, #00A896, #006B61);
+  --card-gradient-text:   #FFFFFF;
+
+  /* Status badge colors */
+  --status-positive-bg:   rgba(0,168,150,0.12);
+  --status-positive-text: #00A896;
+  --status-negative-bg:   rgba(214,69,80,0.12);
+  --status-negative-text: #D64550;
+  --status-pending-bg:    rgba(201,138,31,0.12);
+  --status-pending-text:  #C98A1F;
+}
+
+/* ═══════════════════════════════════════
+   DARK THEME
+═══════════════════════════════════════ */
 [data-theme="dark"] {
   --bg-base:              #1A1A2E;
   --bg-card:              #252540;
@@ -43,50 +86,6 @@
   --status-negative-text: #FF6B8A;
   --status-pending-bg:    rgba(245,158,11,0.15);
   --status-pending-text:  #F59E0B;
-}
-
-/* ═══════════════════════════════════════
-   LIGHT THEME
-═══════════════════════════════════════ */
-[data-theme="light"] {
-  --bg-base:              #EEEEF6;
-  --bg-card:              #FFFFFF;
-  --bg-card-hover:        #F4F4FA;
-  --bg-sidebar:           #FFFFFF;
-  --bg-input:             #F1F1F8;
-  --bg-pill:              #E4E4F0;
-  --overlay:              rgba(26,26,46,0.55);
-  --border:               #E4E4F0;
-  --border-sidebar:       #EDEDF5;
-
-  --teal:                 #00A896;
-  --teal-dark:            #008F7F;
-  --purple:               #6B4E96;
-  --purple-ghost:         rgba(123,94,167,0.12);
-  --purple-ghost-border:  rgba(123,94,167,0.35);
-
-  --text-heading:         #14142B;
-  --text-primary:         #1A1A2E;
-  --text-secondary:       #6B6B8A;
-  --text-muted:           #9A9AB5;
-  --text-on-pill:         #2B2B45;
-  --text-positive:        #00A896;
-  --text-negative:        #D64550;
-  --text-pending:         #C98A1F;
-
-  --card-shadow:          0 1px 3px rgba(26,26,46,0.06), 0 8px 24px rgba(26,26,46,0.04);
-  --btn-primary-shadow:   0 4px 12px rgba(0,168,150,0.25);
-
-  --card-gradient:        linear-gradient(135deg, #00A896, #006B61);
-  --card-gradient-text:   #FFFFFF;
-
-  /* Status badge colors */
-  --status-positive-bg:   rgba(0,168,150,0.12);
-  --status-positive-text: #00A896;
-  --status-negative-bg:   rgba(214,69,80,0.12);
-  --status-negative-text: #D64550;
-  --status-pending-bg:    rgba(201,138,31,0.12);
-  --status-pending-text:  #C98A1F;
 }
 
 /* ═══════════════════════════════════════
