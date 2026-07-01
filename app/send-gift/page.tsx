@@ -100,25 +100,25 @@ export default function SendGiftPage() {
     <AppLayout>
       <div className="max-w-4xl mx-auto">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Send Gift</h1>
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Send a gift quickly</p>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Send Gift</h1>
+          <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Send a gift quickly</p>
         </div>
 
         {/* Gift Grid */}
-        <div className="card rounded-xl p-5">
-          <p className="text-xs font-medium mb-4 uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Select Amount</p>
-          <div className="grid grid-cols-4 gap-3">
+        <div className="card rounded-xl p-4 sm:p-5">
+          <p className="text-xs font-medium mb-3 sm:mb-4 uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Select Amount</p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
             {QUICK_GIFTS.map((g) => (
               <button
                 key={g.amount}
                 onClick={() => openGiftModal(g)}
-                className="gift-pill flex flex-col items-center justify-center gap-2 py-5 rounded-xl transition-colors"
+                className="gift-pill flex flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 sm:py-5 rounded-xl transition-colors"
                 style={{ background: 'var(--bg-card-hover)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--purple)')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg-card-hover)')}
               >
-                <span className="text-3xl">{g.emoji}</span>
-                <span className="text-sm font-medium">{g.amount} USDC</span>
+                <span className="text-2xl sm:text-3xl">{g.emoji}</span>
+                <span className="text-xs sm:text-sm font-medium">{g.amount} USDC</span>
               </button>
             ))}
           </div>

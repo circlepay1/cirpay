@@ -124,34 +124,36 @@ export default function ProfilePage() {
     <AppLayout>
       <div className="max-w-2xl mx-auto">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Profile</h1>
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>On-chain identity &amp; statistics &amp; portfolio</p>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Profile</h1>
+          <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>On-chain identity &amp; statistics &amp; portfolio</p>
         </div>
 
         {!isConnected ? (
           <div className="card rounded-xl p-8 text-center">
             <p className="text-4xl mb-3">👤</p>
-            <p className="text-white font-medium">Connect your wallet</p>
+            <p className="font-medium" style={{ color: 'var(--text-primary)' }}>Connect your wallet</p>
             <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Connect your wallet to view your profile.</p>
           </div>
         ) : (
           <>
             {/* Profile Card */}
-            <div className="rounded-2xl p-6 mb-4" style={{ background: 'var(--card-gradient)', border: '1px solid transparent', boxShadow: 'var(--card-shadow)' }}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+            <div className="rounded-2xl p-4 sm:p-6 mb-4" style={{ background: 'var(--card-gradient)', border: '1px solid transparent', boxShadow: 'var(--card-shadow)' }}>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0"
                        style={{ background: 'rgba(255,255,255,0.2)' }}>
                     {currentAvatar.emoji}
                   </div>
-                  <div>
-                    <p className="text-white font-bold text-lg">{username}</p>
-                    <p className="text-sm font-mono" style={{ color: 'rgba(255,255,255,0.75)' }}>{address}</p>
+                  <div className="min-w-0">
+                    <p className="text-white font-bold text-base sm:text-lg truncate">{username}</p>
+                    <p className="text-xs sm:text-sm font-mono truncate" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                      {address.slice(0, 10)}...{address.slice(-8)}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={openEdit}
-                  className="btn-primary px-4 py-2 text-xs font-medium rounded-xl"
+                  className="btn-primary px-4 py-2 text-xs font-medium rounded-xl w-full sm:w-auto flex-shrink-0"
                 >
                   ✏️ Edit Profile
                 </button>
