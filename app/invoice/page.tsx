@@ -145,32 +145,32 @@ export default function InvoicePage() {
   return (
     <AppLayout>
       <div className="max-w-3xl mx-auto">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Invoice</h1>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Create &amp; track invoices</p>
+            <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Invoice</h1>
+            <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Create &amp; track invoices</p>
           </div>
           <button
             onClick={() => { setTab(tab === 'new' ? 'list' : 'new'); setPayError(null) }}
-            className="btn-primary px-4 py-2 text-sm rounded-lg"
+            className="btn-primary px-4 py-2 text-sm rounded-lg w-full sm:w-auto"
           >
             {tab === 'new' ? '← Invoices' : '+ New Invoice'}
           </button>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="card rounded-xl p-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
+          <div className="card rounded-xl p-3 sm:p-4">
             <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Pending</p>
-            <p className="text-xl font-bold text-yellow-400">${pending.toFixed(2)}</p>
+            <p className="text-lg sm:text-xl font-bold text-yellow-400">${pending.toFixed(2)}</p>
           </div>
-          <div className="card rounded-xl p-4">
+          <div className="card rounded-xl p-3 sm:p-4">
             <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Paid</p>
-            <p className="text-xl font-bold" style={{ color: 'var(--text-positive)' }}>${paid.toFixed(2)}</p>
+            <p className="text-lg sm:text-xl font-bold" style={{ color: 'var(--text-positive)' }}>${paid.toFixed(2)}</p>
           </div>
-          <div className="card rounded-xl p-4">
+          <div className="card rounded-xl p-3 sm:p-4">
             <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Overdue</p>
-            <p className="text-xl font-bold" style={{ color: 'var(--text-negative)' }}>${overdue.toFixed(2)}</p>
+            <p className="text-lg sm:text-xl font-bold" style={{ color: 'var(--text-negative)' }}>${overdue.toFixed(2)}</p>
           </div>
         </div>
 

@@ -134,21 +134,21 @@ export default function AgentPage() {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>ARC Agent</h1>
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Transact with natural language</p>
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>ARC Agent</h1>
+          <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Transact with natural language</p>
         </div>
 
         <div className="flex gap-4 items-stretch">
           <div className="flex-1 rounded-xl overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-            <div className="h-96 overflow-y-auto p-4 space-y-3">
+            <div className="h-80 sm:h-96 overflow-y-auto p-3 sm:p-4 space-y-3">
               {messages.length === 0 && !loading ? (
-                <div className="h-full flex flex-col items-center justify-center gap-5">
-                  <span className="text-6xl">🤖</span>
-                  <div className="flex gap-3">
+                <div className="h-full flex flex-col items-center justify-center gap-4 sm:gap-5 px-4">
+                  <span className="text-5xl sm:text-6xl">🤖</span>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <button
                       onClick={startSendFlow}
-                      className="btn-primary px-5 py-2.5 text-sm font-medium rounded-xl flex items-center gap-2"
+                      className="btn-primary px-5 py-2.5 text-sm font-medium rounded-xl flex items-center justify-center gap-2"
                     >
                       <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" className="w-4 h-4 rounded-full" />
                       Send USDC
@@ -238,20 +238,20 @@ export default function AgentPage() {
               )}
             </div>
 
-            <div className="p-4 flex gap-3" style={{ borderTop: '1px solid var(--border)' }}>
+            <div className="p-3 sm:p-4 flex gap-2 sm:gap-3" style={{ borderTop: '1px solid var(--border)' }}>
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Send 10 USDC to 0x1234... or create an invoice for 50 USDC"
-                className="input-base flex-1"
+                placeholder="Send 10 USDC to 0x1234..."
+                className="input-base flex-1 text-sm"
                 style={{ borderRadius: '0.75rem' }}
               />
               <button
                 onClick={() => sendMessage()}
                 disabled={loading || !input.trim()}
-                className="btn-primary px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-50"
+                className="btn-primary px-3 sm:px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-50"
               >
                 Send
               </button>
