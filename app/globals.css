@@ -98,6 +98,12 @@ body {
   transition: background 0.25s, color 0.25s;
 }
 
+/* Input placeholder colors */
+::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
 /* ═══════════════════════════════════════
    TAILWIND OVERRIDE MAP
    Maps hardcoded Tailwind classes → CSS vars
