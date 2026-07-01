@@ -167,21 +167,23 @@ export default function AgentPage() {
                     <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-sm px-4 py-2 rounded-2xl text-sm ${
                         msg.role === 'user'
-                          ? 'text-white'
+                          ? ''
                           : msg.type === 'error'
-                          ? 'bg-red-900/50 text-red-300 border border-red-700'
+                          ? 'bg-red-900/50 border border-red-700'
                           : msg.type === 'success'
-                          ? 'bg-green-900/50 text-green-300 border border-green-700'
-                          : 'text-gray-200'
+                          ? 'bg-green-900/50 border border-green-700'
+                          : ''
                       }`}
                       style={
                         msg.role === 'user'
-                          ? { background: 'var(--purple)' }
+                          ? { background: 'var(--purple)', color: '#FFFFFF' }
+                          : msg.type === 'error'
+                          ? { color: '#FF6B8A' }
+                          : msg.type === 'success'
+                          ? { color: '#00C9B1' }
                           : msg.type === 'info'
-                          ? { background: 'var(--bg-card-hover)' }
-                          : msg.role === 'assistant' && !msg.type
-                          ? { background: 'var(--bg-card-hover)' }
-                          : undefined
+                          ? { background: 'var(--bg-card-hover)', color: 'var(--text-primary)' }
+                          : { background: 'var(--bg-card-hover)', color: 'var(--text-primary)' }
                       }>
                         {msg.content}
                       </div>
@@ -195,11 +197,11 @@ export default function AgentPage() {
                         <div className="space-y-2 mb-4">
                           <div className="flex justify-between text-sm">
                             <span style={{ color: 'var(--text-secondary)' }}>Recipient</span>
-                            <span className="text-white font-mono text-xs">{pendingSend.to.slice(0, 10)}...{pendingSend.to.slice(-6)}</span>
+                            <span className="font-mono text-xs" style={{ color: 'var(--text-primary)' }}>{pendingSend.to.slice(0, 10)}...{pendingSend.to.slice(-6)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span style={{ color: 'var(--text-secondary)' }}>Amount</span>
-                            <span className="text-white font-bold">{pendingSend.amount} USDC</span>
+                            <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{pendingSend.amount} USDC</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span style={{ color: 'var(--text-secondary)' }}>Gas</span>
