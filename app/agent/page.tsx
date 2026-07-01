@@ -176,7 +176,7 @@ export default function AgentPage() {
                       }`}
                       style={
                         msg.role === 'user'
-                          ? { background: 'var(--purple)', color: '#FFFFFF' }
+                          ? { background: 'var(--teal)', color: '#FFFFFF' }
                           : msg.type === 'error'
                           ? { color: '#FF6B8A' }
                           : msg.type === 'success'
