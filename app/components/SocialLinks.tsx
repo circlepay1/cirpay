@@ -1,6 +1,11 @@
 'use client'
 
+import { useState } from 'react'
+import DocsModal from './DocsModal'
+
 export default function SocialLinks() {
+  const [docsOpen, setDocsOpen] = useState(false)
+
   const links = [
     {
       name: 'X (Twitter)',
@@ -10,6 +15,7 @@ export default function SocialLinks() {
         </svg>
       ),
       url: 'https://x.com/1cirpay',
+      onClick: null,
     },
     {
       name: 'GitHub',
@@ -19,6 +25,7 @@ export default function SocialLinks() {
         </svg>
       ),
       url: 'https://github.com/1circlepay-1/cirpay',
+      onClick: null,
     },
     {
       name: 'Documentation',
@@ -28,7 +35,8 @@ export default function SocialLinks() {
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
         </svg>
       ),
-      url: 'https://docs.arc.io/',
+      url: null,
+      onClick: () => setDocsOpen(true),
     },
     {
       name: 'Home',
@@ -39,29 +47,51 @@ export default function SocialLinks() {
         </svg>
       ),
       url: '/',
+      onClick: null,
     },
   ]
 
   return (
-    <div className="fixed bottom-6 right-6 z-30 flex flex-row gap-3">
-      {links.map((link) => (
-        <a
-          key={link.name}
-          href={link.url}
-          target={link.url.startsWith('http') ? '_blank' : undefined}
-          rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-          title={link.name}
-          className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
-          style={{
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            color: 'var(--text-primary)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          }}
-        >
-          {link.icon}
-        </a>
-      ))}
-    </div>
+    <>
+      <div className="fixed bottom-6 right-6 z-30 flex flex-row gap-3">
+        {links.map((link) => (
+          link.onClick ? (
+            <button
+              key={link.name}
+              onClick={link.onClick}
+              title={link.name}
+              className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              }}
+            >
+              {link.icon}
+            </button>
+          ) : (
+            <a
+              key={link.name}
+              href={link.url!}
+              target={link.url!.startsWith('http') ? '_blank' : undefined}
+              rel={link.url!.startsWith('http') ? 'noopener noreferrer' : undefined}
+              title={link.name}
+              className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              }}
+            >
+              {link.icon}
+            </a>
+          )
+        ))}
+      </div>
+
+      <DocsModal isOpen={docsOpen} onClose={() => setDocsOpen(false)} />
+    </>
   )
 }
