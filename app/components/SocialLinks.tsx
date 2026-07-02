@@ -43,7 +43,7 @@ export default function SocialLinks() {
   ]
 
   return (
-    <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-3">
+    <div className="fixed bottom-6 right-6 z-30 flex flex-row gap-3">
       {links.map((link) => (
         <a
           key={link.name}
@@ -51,7 +51,7 @@ export default function SocialLinks() {
           target={link.url.startsWith('http') ? '_blank' : undefined}
           rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
           title={link.name}
-          className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110"
+          className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
