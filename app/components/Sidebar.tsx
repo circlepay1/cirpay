@@ -18,7 +18,7 @@ const navItems = [
   { group: 'EXPLORE', items: [
     { href: '/profile', label: 'Profile', icon: '👤' },
     { href: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
-    { href: '/quests', label: 'Tasks', icon: '✅' },
+    { href: '/tasks', label: 'Tasks', icon: '✅' },
   ]},
 ]
 
