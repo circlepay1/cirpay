@@ -8,7 +8,7 @@ interface DocsModalProps {
 }
 
 export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
-  const [activeSection, setActiveSection] = useState('getting-started')
+  const [activeSection, setActiveSection] = useState('overview')
 
   if (!isOpen) return null
 
