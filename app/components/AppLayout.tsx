@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Sidebar from './Sidebar'
+import SocialLinks from './SocialLinks'
 import GiftNotification from './GiftNotification'
 import PayrollNotification from './PayrollNotification'
 import InvoiceNotification from './InvoiceNotification'
@@ -50,6 +51,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 px-4 sm:px-6 lg:px-8 pt-20 lg:pt-[88px] pb-8 overflow-y-auto">
         {children}
       </main>
+      <SocialLinks />
       <GiftNotification />
       <PayrollNotification />
       <InvoiceNotification />
