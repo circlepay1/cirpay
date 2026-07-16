@@ -14,6 +14,8 @@ const POINTS_PER_TYPE: Record<string, number> = {
 
 const MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' }
 
+const PAGE_SIZE = 10
+
 type LeaderEntry = {
   address: string
   points: number
@@ -24,6 +26,7 @@ export default function LeaderboardPage() {
   const { address } = useAccount()
   const [leaders, setLeaders] = useState<LeaderEntry[]>([])
   const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     setLoading(true)
@@ -60,12 +63,13 @@ export default function LeaderboardPage() {
     const sorted: LeaderEntry[] = Object.entries(pointsMap)
       .map(([address, v]) => ({ address, ...v }))
       .sort((a, b) => b.points - a.points)
-      .slice(0, 20)
 
     setLeaders(sorted)
     setLoading(false)
   }
 
+  const totalPages = Math.ceil(leaders.length / PAGE_SIZE)
+  const pageEntries = leaders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
   const myRank = leaders.findIndex((l) => l.address === address?.toLowerCase()) + 1
 
   return (
@@ -108,55 +112,113 @@ export default function LeaderboardPage() {
               <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Rankings will appear as tasks are completed.</p>
             </div>
           ) : (
-            <ul>
-              {leaders.map((entry, i) => {
-                const rank = i + 1
-                const isMe = entry.address === address?.toLowerCase()
-                const isLast = i === leaders.length - 1
-                return (
-                  <li
-                    key={entry.address}
-                    className={`flex items-center gap-4 px-6 py-4 transition-colors ${isMe ? 'border-l-2' : 'card-hover'}`}
-                    style={{
-                      ...(isLast ? {} : { borderBottom: '1px solid var(--border)' }),
-                      ...(isMe ? { background: 'rgba(123,94,167,0.12)', borderLeftColor: 'var(--teal)' } : {}),
-                    }}
-                  >
-                    {/* Rank */}
-                    <div className="w-8 text-center flex-shrink-0">
-                      {MEDALS[rank] ? (
-                        <span className="text-xl">{MEDALS[rank]}</span>
-                      ) : (
-                        <span className="font-bold text-sm" style={{ color: 'var(--text-secondary)' }}>{rank}</span>
-                      )}
-                    </div>
+            <>
+              <ul>
+                {pageEntries.map((entry, i) => {
+                  const rank = (currentPage - 1) * PAGE_SIZE + i + 1
+                  const isMe = entry.address === address?.toLowerCase()
+                  const isLast = i === pageEntries.length - 1
+                  return (
+                    <li
+                      key={entry.address}
+                      className={`flex items-center gap-4 px-6 py-4 transition-colors ${isMe ? 'border-l-2' : 'card-hover'}`}
+                      style={{
+                        ...(isLast ? {} : { borderBottom: '1px solid var(--border)' }),
+                        ...(isMe ? { background: 'rgba(123,94,167,0.12)', borderLeftColor: 'var(--teal)' } : {}),
+                      }}
+                    >
+                      {/* Rank */}
+                      <div className="w-8 text-center flex-shrink-0">
+                        {MEDALS[rank] ? (
+                          <span className="text-xl">{MEDALS[rank]}</span>
+                        ) : (
+                          <span className="font-bold text-sm" style={{ color: 'var(--text-secondary)' }}>{rank}</span>
+                        )}
+                      </div>
 
-                    {/* Avatar */}
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                         style={isMe
-                           ? { background: 'var(--purple)', color: '#fff' }
-                           : { background: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}>
-                      {entry.address.slice(2, 4).toUpperCase()}
-                    </div>
+                      {/* Avatar */}
+                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                           style={isMe
+                             ? { background: 'var(--purple)', color: '#fff' }
+                             : { background: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}>
+                        {entry.address.slice(2, 4).toUpperCase()}
+                      </div>
 
-                    {/* Address */}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium" style={{ color: isMe ? 'var(--teal)' : 'var(--text-primary)' }}>
-                        {entry.address.slice(0, 6)}...{entry.address.slice(-4)}
-                      </p>
-                    </div>
+                      {/* Address */}
+                      <div className="flex-1">
+                        <p className="text-sm font-medium" style={{ color: isMe ? 'var(--teal)' : 'var(--text-primary)' }}>
+                          {entry.address.slice(0, 6)}...{entry.address.slice(-4)}
+                        </p>
+                      </div>
 
-                    {/* Points */}
-                    <div className="text-right">
-                      <p className={`font-bold text-sm ${rank <= 3 ? 'text-yellow-400' : 'text-white'}`}>
-                        {entry.points.toLocaleString()}
-                      </p>
-                      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>pts</p>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
+                      {/* Points */}
+                      <div className="text-right">
+                        <p className={`font-bold text-sm ${rank <= 3 ? 'text-yellow-400' : 'text-white'}`}>
+                          {entry.points.toLocaleString()}
+                        </p>
+                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>pts</p>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4" style={{ borderTop: '1px solid var(--border)' }}>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    Page {currentPage} of {totalPages} · {leaders.length} total
+                  </p>
+                  <div className="flex items-center gap-2">
+                    {/* Prev */}
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors"
+                      style={{
+                        background: currentPage === 1 ? 'var(--bg-input)' : 'var(--bg-card-hover)',
+                        color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)',
+                        border: '1px solid var(--border)',
+                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      ‹
+                    </button>
+
+                    {/* Page numbers */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors"
+                        style={
+                          page === currentPage
+                            ? { background: 'var(--teal)', color: '#fff', border: '1px solid transparent' }
+                            : { background: 'var(--bg-card-hover)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }
+                        }
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    {/* Next */}
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors"
+                      style={{
+                        background: currentPage === totalPages ? 'var(--bg-input)' : 'var(--bg-card-hover)',
+                        color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)',
+                        border: '1px solid var(--border)',
+                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
