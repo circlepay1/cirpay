@@ -167,53 +167,62 @@ export default function LeaderboardPage() {
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-6 py-4" style={{ borderTop: '1px solid var(--border)' }}>
                   <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    Page {currentPage} of {totalPages} · {leaders.length} total
+                    {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, leaders.length)} / {leaders.length}
                   </p>
-                  <div className="flex items-center gap-2">
-                    {/* Prev */}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
+                  <div className="flex items-center gap-1">
+                    {/* First */}
+                    <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors"
-                      style={{
-                        background: currentPage === 1 ? 'var(--bg-input)' : 'var(--bg-card-hover)',
-                        color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)',
-                        border: '1px solid var(--border)',
-                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                      }}
-                    >
+                      style={{ background: 'var(--bg-card-hover)', color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)', border: '1px solid var(--border)' }}>
+                      «
+                    </button>
+                    {/* Prev */}
+                    <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors"
+                      style={{ background: 'var(--bg-card-hover)', color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)', border: '1px solid var(--border)' }}>
                       ‹
                     </button>
 
-                    {/* Page numbers */}
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors"
-                        style={
-                          page === currentPage
-                            ? { background: 'var(--teal)', color: '#fff', border: '1px solid transparent' }
-                            : { background: 'var(--bg-card-hover)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }
-                        }
-                      >
-                        {page}
-                      </button>
-                    ))}
+                    {/* Akıllı sayfa numaraları */}
+                    {(() => {
+                      const pages: (number | '...')[] = []
+                      const delta = 2
+                      const left  = Math.max(2, currentPage - delta)
+                      const right = Math.min(totalPages - 1, currentPage + delta)
+
+                      pages.push(1)
+                      if (left > 2) pages.push('...')
+                      for (let i = left; i <= right; i++) pages.push(i)
+                      if (right < totalPages - 1) pages.push('...')
+                      if (totalPages > 1) pages.push(totalPages)
+
+                      return pages.map((page, idx) =>
+                        page === '...' ? (
+                          <span key={`dots-${idx}`} className="w-8 h-8 flex items-center justify-center text-sm"
+                            style={{ color: 'var(--text-muted)' }}>…</span>
+                        ) : (
+                          <button key={page} onClick={() => setCurrentPage(page as number)}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors"
+                            style={page === currentPage
+                              ? { background: 'var(--teal)', color: '#fff', border: '1px solid transparent' }
+                              : { background: 'var(--bg-card-hover)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}>
+                            {page}
+                          </button>
+                        )
+                      )
+                    })()}
 
                     {/* Next */}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
+                    <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors"
-                      style={{
-                        background: currentPage === totalPages ? 'var(--bg-input)' : 'var(--bg-card-hover)',
-                        color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)',
-                        border: '1px solid var(--border)',
-                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                      }}
-                    >
+                      style={{ background: 'var(--bg-card-hover)', color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)', border: '1px solid var(--border)' }}>
                       ›
+                    </button>
+                    {/* Last */}
+                    <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors"
+                      style={{ background: 'var(--bg-card-hover)', color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)', border: '1px solid var(--border)' }}>
+                      »
                     </button>
                   </div>
                 </div>
