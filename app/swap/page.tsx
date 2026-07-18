@@ -92,7 +92,7 @@ export default function SwapPage() {
 
       const hash = (result as { txHash?: string })?.txHash ?? ''
       setTxHash(hash)
-      await saveTransaction(address, address, parseFloat(amountIn), hash, 'send')
+      await saveTransaction(address, address, parseFloat(amountIn), hash, 'swap')
 
       setAmountIn(''); setEstimate(null)
       setStatus('success')

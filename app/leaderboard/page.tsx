@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase'
 const POINTS_PER_TYPE: Record<string, number> = {
   send: 250,
   gift: 150,
+  swap: 500,
   invoice: 500,
   payroll: 500,
 }

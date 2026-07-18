@@ -24,7 +24,7 @@ export type Transaction = {
   recipient_address: string
   amount: number
   tx_hash: string
-  type: 'send' | 'invoice' | 'gift' | 'payroll'
+  type: 'send' | 'invoice' | 'gift' | 'payroll' | 'swap'
 }
 
 export async function saveTransaction(

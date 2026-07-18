@@ -35,6 +35,8 @@ export default function QuestsPage() {
   const [stats, setStats] = useState<QuestStat[]>([
     { id: 'agent_send', title: 'Send USDC via Agent', desc: 'Earn points for every agent send transaction', pointsEach: 250, emoji: '🤖', count: 0 },
     { id: 'quick_gift', title: 'Send a Quick Gift', desc: 'Earn points for every gift sent', pointsEach: 150, emoji: '🎁', count: 0 },
+    { id: 'send_token', title: 'Send Tokens', desc: 'Earn points for every token transfer via Send', pointsEach: 250, emoji: '↗', count: 0 },
+    { id: 'swap_token', title: 'Swap Tokens', desc: 'Earn points for every token swap', pointsEach: 500, emoji: '⇄', count: 0 },
     { id: 'invoice_paid', title: 'Collect an Invoice', desc: 'Earn points for every paid invoice you sent', pointsEach: 500, emoji: '🧾', count: 0 },
     { id: 'invoice_pay', title: 'Pay an Invoice', desc: 'Earn points for every invoice you pay', pointsEach: 500, emoji: '💳', count: 0 },
     { id: 'payroll_done', title: 'Run Payroll', desc: 'Earn points for every payroll payment', pointsEach: 500, emoji: '💰', count: 0 },
@@ -56,12 +58,16 @@ export default function QuestsPage() {
     const [
       { count: agentCount },
       { count: giftCount },
+      { count: sendCount },
+      { count: swapCount },
       { count: invoiceCount },
       { count: invoicePayCount },
       { count: payrollCount },
     ] = await Promise.all([
       supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('type', 'send'),
       supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('type', 'gift'),
+      supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('type', 'send'),
+      supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('type', 'swap'),
       supabase.from('invoices').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('status', 'paid'),
       supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('type', 'invoice'),
       supabase.from('transactions').select('*', { count: 'exact', head: true }).eq('sender_address', addr).eq('type', 'payroll'),
@@ -69,6 +75,8 @@ export default function QuestsPage() {
     setStats((prev) => prev.map((s) => {
       if (s.id === 'agent_send') return { ...s, count: agentCount ?? 0 }
       if (s.id === 'quick_gift') return { ...s, count: giftCount ?? 0 }
+      if (s.id === 'send_token') return { ...s, count: sendCount ?? 0 }
+      if (s.id === 'swap_token') return { ...s, count: swapCount ?? 0 }
       if (s.id === 'invoice_paid') return { ...s, count: invoiceCount ?? 0 }
       if (s.id === 'invoice_pay') return { ...s, count: invoicePayCount ?? 0 }
       if (s.id === 'payroll_done') return { ...s, count: payrollCount ?? 0 }
