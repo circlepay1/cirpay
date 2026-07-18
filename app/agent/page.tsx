@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useSendTransaction } from 'wagmi'
-import { isAddress, parseUnits } from 'viem'
+import { useAccount } from 'wagmi'
+import { isAddress } from 'viem'
 import AppLayout from '@/app/components/AppLayout'
-import { USDC_ADDRESS, USDC_DECIMALS } from '@/lib/arc'
 import { supabase, saveTransaction } from '@/lib/supabase'
+import { AppKit } from '@circle-fin/app-kit'
+import { getAdapter } from '@/lib/adapter'
 
 type Message = {
   role: 'user' | 'assistant'
@@ -15,7 +16,6 @@ type Message = {
 
 export default function AgentPage() {
   const { address, isConnected } = useAccount()
-  const { sendTransactionAsync } = useSendTransaction()
 
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
@@ -36,13 +36,21 @@ export default function AgentPage() {
     if (!pendingSend) return
     setConfirmLoading(true)
     try {
-      const amount = parseUnits(pendingSend.amount, USDC_DECIMALS)
-      const txData = `0xa9059cbb${pendingSend.to.slice(2).padStart(64, '0')}${amount.toString(16).padStart(64, '0')}`
-      const tx = await sendTransactionAsync({ to: USDC_ADDRESS, data: txData as `0x${string}` })
-      await saveTransaction(address!, pendingSend.to, parseFloat(pendingSend.amount), tx, 'send')
+      const kit     = new AppKit()
+      const adapter = await getAdapter()
+
+      const result = await kit.send({
+        from:  { adapter, chain: 'Arc_Testnet' },
+        to:    pendingSend.to as `0x${string}`,
+        amount: pendingSend.amount,
+        token: 'USDC',
+      })
+
+      const txHash = (result as { txHash?: string })?.txHash ?? ''
+      await saveTransaction(address!, pendingSend.to, parseFloat(pendingSend.amount), txHash, 'send')
       setMessages((prev) => [...prev, {
         role: 'assistant',
-        content: `✅ ${pendingSend.amount} USDC sent! TX: ${tx.slice(0, 10)}...`,
+        content: `✅ ${pendingSend.amount} USDC sent! TX: ${txHash.slice(0, 10)}...`,
         type: 'success',
       }])
       setPendingSend(null)

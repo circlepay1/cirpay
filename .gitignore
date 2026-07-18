@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Bot - private keys içerir, asla commit'e atma!
+/scripts/wallets.json

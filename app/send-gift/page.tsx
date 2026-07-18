@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useSendTransaction } from 'wagmi'
-import { isAddress, parseUnits } from 'viem'
+import { useAccount } from 'wagmi'
+import { isAddress } from 'viem'
 import AppLayout from '@/app/components/AppLayout'
-import { USDC_ADDRESS, USDC_DECIMALS } from '@/lib/arc'
 import { supabase, saveTransaction } from '@/lib/supabase'
+import { AppKit } from '@circle-fin/app-kit'
+import { getAdapter } from '@/lib/adapter'
 
 const QUICK_GIFTS = [
   { emoji: '⭐', amount: '5' },
@@ -29,7 +30,6 @@ type AnimState = 'idle' | 'closing' | 'flying' | 'success'
 
 export default function SendGiftPage() {
   const { address, isConnected } = useAccount()
-  const { sendTransactionAsync } = useSendTransaction()
 
   const [giftModal, setGiftModal] = useState<GiftModal>(null)
   const [giftTo, setGiftTo] = useState('')
@@ -65,10 +65,17 @@ export default function SendGiftPage() {
 
     setAnimState('flying')
     try {
-      const amount = parseUnits(giftModal.amount, USDC_DECIMALS)
-      const to = giftTo as `0x${string}`
-      const data = `0xa9059cbb${to.slice(2).padStart(64, '0')}${amount.toString(16).padStart(64, '0')}`
-      const tx = await sendTransactionAsync({ to: USDC_ADDRESS, data: data as `0x${string}` })
+      const kit     = new AppKit()
+      const adapter = await getAdapter()
+
+      const tx = await kit.send({
+        from:  { adapter, chain: 'Arc_Testnet' },
+        to:    giftTo as `0x${string}`,
+        amount: giftModal.amount,
+        token: 'USDC',
+      })
+
+      const txHash = (tx as { txHash?: string })?.txHash ?? ''
 
       await supabase.from('gifts').insert({
         sender_address: address?.toLowerCase() ?? '',
@@ -76,10 +83,10 @@ export default function SendGiftPage() {
         amount: giftModal.amount,
         emoji: giftModal.emoji,
         note: giftNote,
-        tx_hash: tx,
+        tx_hash: txHash,
         seen: false,
       })
-      await saveTransaction(address!, giftTo, parseFloat(giftModal.amount), tx, 'gift')
+      await saveTransaction(address!, giftTo, parseFloat(giftModal.amount), txHash, 'gift')
 
       await delay(400)
 

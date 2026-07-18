@@ -9,6 +9,8 @@ const navItems = [
   { group: 'MAIN', items: [
     { href: '/agent', label: 'Agent', icon: '🤖' },
     { href: '/send-gift', label: 'Send Gift', icon: '🎁' },
+    { href: '/send', label: 'Send', icon: '↗' },
+    { href: '/swap', label: 'Swap', icon: '⇄' },
   ]},
   { group: 'FINANCE', items: [
     { href: '/invoice', label: 'Invoice', icon: '🧾' },
