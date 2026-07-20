@@ -35,20 +35,32 @@ export default function LeaderboardPage() {
   }, [])
 
   async function loadLeaderboard() {
-    const { data: txs } = await supabase
-      .from('transactions')
-      .select('sender_address, type')
+    // Tüm transaction'ları sayfalı çek (Supabase limit: 1000/istek)
+    let allTxs: { sender_address: string; type: string }[] = []
+    let from = 0
+    const batchSize = 1000
+
+    while (true) {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('sender_address, type')
+        .range(from, from + batchSize - 1)
+      if (error || !data || data.length === 0) break
+      allTxs = [...allTxs, ...data]
+      if (data.length < batchSize) break
+      from += batchSize
+    }
 
     const { data: paidInvoices } = await supabase
       .from('invoices')
       .select('recipient_address')
       .eq('status', 'paid')
 
-    if (!txs) { setLoading(false); return }
+    if (allTxs.length === 0) { setLoading(false); return }
 
     const pointsMap: Record<string, { points: number; txCount: number }> = {}
 
-    txs.forEach((tx: { sender_address: string; type: string }) => {
+    allTxs.forEach((tx) => {
       const addr = tx.sender_address.toLowerCase()
       if (!pointsMap[addr]) pointsMap[addr] = { points: 0, txCount: 0 }
       pointsMap[addr].points += POINTS_PER_TYPE[tx.type] ?? 0
