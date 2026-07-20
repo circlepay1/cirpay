@@ -42,3 +42,7 @@ next-env.d.ts
 
 # Bot - private keys içerir, asla commit'e atma!
 /scripts/wallets.json
+/scripts/new-wallets-50.json
+
+# Otomasyon scriptleri — gizli tut
+/scripts/
