@@ -43,8 +43,8 @@ export default function SwapPage() {
   // Token balances
   const { data: balIn }  = useBalance({ address, chainId: arcTestnet.id, token: tokenIn.address  as `0x${string}` })
   const { data: balOut } = useBalance({ address, chainId: arcTestnet.id, token: tokenOut.address as `0x${string}` })
-  const balInStr  = balIn  ? (Number(balIn.value)  / Math.pow(10, tokenIn.decimals)).toFixed(4)  : '0'
-  const balOutStr = balOut ? (Number(balOut.value) / Math.pow(10, tokenOut.decimals)).toFixed(4) : '0'
+  const balInStr  = balIn  ? parseFloat(balIn.formatted).toFixed(4)  : '0'
+  const balOutStr = balOut ? parseFloat(balOut.formatted).toFixed(4) : '0'
 
   // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
   useEffect(() => { patchCircleFetch() }, [])
@@ -162,9 +162,10 @@ export default function SwapPage() {
                 {[25, 50, 75, 100].map(pct => (
                   <button key={pct}
                     onClick={() => {
+                      const bal = balIn ? parseFloat(balIn.formatted) : 0
                       const val = pct === 100
-                        ? balInStr
-                        : (parseFloat(balInStr) * pct / 100).toFixed(6).replace(/\.?0+$/, '')
+                        ? bal.toFixed(6).replace(/\.?0+$/, '')
+                        : (bal * pct / 100).toFixed(6).replace(/\.?0+$/, '')
                       setAmountIn(val)
                       setEstimate(null)
                     }}
