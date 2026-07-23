@@ -279,7 +279,7 @@ export default function SwapPage() {
               disabled={isPending || !amountIn || parseFloat(amountIn) <= 0}
               className="w-full py-3 rounded-xl font-bold text-sm transition-all disabled:cursor-not-allowed"
               style={{
-                background: (amountIn && parseFloat(amountIn) > 0) ? 'var(--purple)' : 'var(--bg-input)',
+                background: (amountIn && parseFloat(amountIn) > 0) ? 'var(--teal)' : 'var(--bg-input)',
                 color:      (amountIn && parseFloat(amountIn) > 0) ? '#fff' : 'var(--text-secondary)',
               }}>
               {status === 'estimating' ? '⏳ Getting quote...'

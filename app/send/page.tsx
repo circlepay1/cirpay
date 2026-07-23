@@ -210,7 +210,7 @@ export default function SendPage() {
               disabled={!canSend}
               className="w-full py-3 rounded-xl font-bold text-sm transition-all disabled:cursor-not-allowed"
               style={{
-                background: canSend ? 'var(--purple)' : 'var(--bg-input)',
+                background: canSend ? 'var(--teal)' : 'var(--bg-input)',
                 color:      canSend ? '#fff'          : 'var(--text-secondary)',
               }}
             >
