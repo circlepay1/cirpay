@@ -3,6 +3,9 @@ import { AppKit } from "@circle-fin/app-kit"
 import { createViemAdapterFromPrivateKey } from "@circle-fin/adapter-viem-v2"
 import { createPublicClient, http } from "viem"
 
+// SSL sertifika sorununu bypass et (Arc Testnet)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
 const kit = new AppKit()
 
 export async function POST(req: NextRequest) {
