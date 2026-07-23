@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useAccount, useSwitchChain, useBalance } from 'wagmi'
 import { isAddress } from 'viem'
 import AppLayout from '@/app/components/AppLayout'
