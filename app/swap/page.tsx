@@ -1,18 +1,18 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount, useSwitchChain, useBalance } from 'wagmi'
 import AppLayout from '@/app/components/AppLayout'
-import { arcTestnet } from '@/lib/arc'
+import { arcTestnet, USDC_ADDRESS, EURC_ADDRESS, CIRBTC_ADDRESS } from '@/lib/arc'
 import { saveTransaction } from '@/lib/supabase'
 import { AppKit } from '@circle-fin/app-kit'
 import { getAdapter } from '@/lib/adapter'
 import { patchCircleFetch } from '@/lib/patch-circle-fetch'
 
 const TOKENS = [
-  { symbol: 'USDC',   name: 'USD Coin',      decimals: 6, logo: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png' },
-  { symbol: 'EURC',   name: 'Euro Coin',     decimals: 6, logo: 'https://assets.coingecko.com/coins/images/26045/small/euro-coin.png' },
-  { symbol: 'cirBTC', name: 'Circle Bitcoin',decimals: 8, logo: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png' },
+  { symbol: 'USDC',   name: 'USD Coin',      decimals: 6, address: USDC_ADDRESS,   logo: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png' },
+  { symbol: 'EURC',   name: 'Euro Coin',     decimals: 6, address: EURC_ADDRESS,   logo: 'https://assets.coingecko.com/coins/images/26045/small/euro-coin.png' },
+  { symbol: 'cirBTC', name: 'Circle Bitcoin',decimals: 8, address: CIRBTC_ADDRESS, logo: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png' },
 ]
 
 type Status = 'idle' | 'estimating' | 'swapping' | 'success' | 'error'
@@ -39,6 +39,12 @@ export default function SwapPage() {
 
   const isWrongChain = !!address && chainId !== arcTestnet.id
   const isPending    = status === 'swapping' || status === 'estimating'
+
+  // Token balances
+  const { data: balIn }  = useBalance({ address, chainId: arcTestnet.id, token: tokenIn.address  as `0x${string}` })
+  const { data: balOut } = useBalance({ address, chainId: arcTestnet.id, token: tokenOut.address as `0x${string}` })
+  const balInStr  = balIn  ? (Number(balIn.value)  / Math.pow(10, tokenIn.decimals)).toFixed(4)  : '0'
+  const balOutStr = balOut ? (Number(balOut.value) / Math.pow(10, tokenOut.decimals)).toFixed(4) : '0'
 
   // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
   useEffect(() => { patchCircleFetch() }, [])
@@ -118,6 +124,7 @@ export default function SwapPage() {
           <div className="rounded-xl border p-3" style={{ background: 'var(--bg-input)', borderColor: 'var(--border)' }}>
             <div className="flex justify-between mb-2">
               <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>You pay</span>
+              {address && <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Balance: <b style={{ color: 'var(--text-primary)' }}>{balInStr}</b></span>}
             </div>
             <div className="flex items-center gap-2">
               <input type="number" placeholder="0.0" value={amountIn}
@@ -166,6 +173,7 @@ export default function SwapPage() {
           <div className="rounded-xl border p-3" style={{ background: 'var(--bg-input)', borderColor: 'var(--border)' }}>
             <div className="flex justify-between mb-2">
               <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>You receive</span>
+              {address && <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Balance: <b style={{ color: 'var(--text-primary)' }}>{balOutStr}</b></span>}
             </div>
             <div className="flex items-center gap-2">
               <div className="flex-1 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
