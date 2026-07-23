@@ -156,6 +156,28 @@ export default function SwapPage() {
                 )}
               </div>
             </div>
+            {/* PCT butonları */}
+            {address && parseFloat(balInStr) > 0 && (
+              <div className="flex gap-1 mt-2">
+                {[25, 50, 75, 100].map(pct => (
+                  <button key={pct}
+                    onClick={() => {
+                      const val = pct === 100
+                        ? balInStr
+                        : (parseFloat(balInStr) * pct / 100).toFixed(6).replace(/\.?0+$/, '')
+                      setAmountIn(val)
+                      setEstimate(null)
+                    }}
+                    className="flex-1 rounded-full py-0.5 text-xs font-semibold transition-all border"
+                    style={{ background: 'var(--bg-card)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--purple)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)' }}
+                  >
+                    {pct === 100 ? 'MAX' : `${pct}%`}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Swap arrow */}
