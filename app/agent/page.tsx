@@ -7,6 +7,7 @@ import AppLayout from '@/app/components/AppLayout'
 import { supabase, saveTransaction } from '@/lib/supabase'
 import { AppKit } from '@circle-fin/app-kit'
 import { getAdapter } from '@/lib/adapter'
+import { patchCircleFetch } from '@/lib/patch-circle-fetch'
 
 type Message = {
   role: 'user' | 'assistant'
@@ -18,6 +19,9 @@ export default function AgentPage() {
   const { address, isConnected } = useAccount()
 
   const [input, setInput] = useState('')
+
+  // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
+  useEffect(() => { patchCircleFetch() }, [])
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
   const [pendingSend, setPendingSend] = useState<{ to: string; amount: string } | null>(null)

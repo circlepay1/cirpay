@@ -7,6 +7,7 @@ import AppLayout from '@/app/components/AppLayout'
 import { arcTestnet, USDC_ADDRESS, EURC_ADDRESS, CIRBTC_ADDRESS } from '@/lib/arc'
 import { AppKit } from '@circle-fin/app-kit'
 import { getAdapter } from '@/lib/adapter'
+import { patchCircleFetch } from '@/lib/patch-circle-fetch'
 import { saveTransaction } from '@/lib/supabase'
 
 const TOKENS = [
@@ -38,6 +39,9 @@ export default function SendPage() {
   const isWrongChain    = !!address && chainId !== arcTestnet.id
   const isPending       = status === 'sending'
   const validRecipient  = isAddress(recipient)
+
+  // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
+  useEffect(() => { patchCircleFetch() }, [])
 
   const handleSend = useCallback(async () => {
     if (!address || !amount || parseFloat(amount) <= 0 || !validRecipient) return

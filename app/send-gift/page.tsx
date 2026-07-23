@@ -7,6 +7,7 @@ import AppLayout from '@/app/components/AppLayout'
 import { supabase, saveTransaction } from '@/lib/supabase'
 import { AppKit } from '@circle-fin/app-kit'
 import { getAdapter } from '@/lib/adapter'
+import { patchCircleFetch } from '@/lib/patch-circle-fetch'
 
 const QUICK_GIFTS = [
   { emoji: '⭐', amount: '5' },
@@ -32,6 +33,9 @@ export default function SendGiftPage() {
   const { address, isConnected } = useAccount()
 
   const [giftModal, setGiftModal] = useState<GiftModal>(null)
+
+  // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
+  useEffect(() => { patchCircleFetch() }, [])
   const [giftTo, setGiftTo] = useState('')
   const [giftNote, setGiftNote] = useState('')
   const [giftSending, setGiftSending] = useState(false)

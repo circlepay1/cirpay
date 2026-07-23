@@ -1,17 +1,18 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useAccount, useSwitchChain, useBalance } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import AppLayout from '@/app/components/AppLayout'
 import { arcTestnet } from '@/lib/arc'
 import { saveTransaction } from '@/lib/supabase'
 import { AppKit } from '@circle-fin/app-kit'
 import { getAdapter } from '@/lib/adapter'
+import { patchCircleFetch } from '@/lib/patch-circle-fetch'
 
 const TOKENS = [
   { symbol: 'USDC',   name: 'USD Coin',      decimals: 6, logo: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png' },
-  { symbol: 'EURC',   name: 'Euro Coin',      decimals: 6, logo: 'https://assets.coingecko.com/coins/images/26045/small/euro-coin.png' },
-  { symbol: 'cirBTC', name: 'Circle Bitcoin', decimals: 8, logo: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png' },
+  { symbol: 'EURC',   name: 'Euro Coin',     decimals: 6, logo: 'https://assets.coingecko.com/coins/images/26045/small/euro-coin.png' },
+  { symbol: 'cirBTC', name: 'Circle Bitcoin',decimals: 8, logo: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png' },
 ]
 
 type Status = 'idle' | 'estimating' | 'swapping' | 'success' | 'error'
@@ -26,31 +27,28 @@ export default function SwapPage() {
   const { address, chainId } = useAccount()
   const { switchChain }      = useSwitchChain()
 
-  const [tokenIn,   setTokenIn]   = useState(TOKENS[0])
-  const [tokenOut,  setTokenOut]  = useState(TOKENS[1])
-  const [amountIn,  setAmountIn]  = useState('')
-  const [status,    setStatus]    = useState<Status>('idle')
-  const [estimate,  setEstimate]  = useState<Estimate | null>(null)
-  const [errMsg,    setErrMsg]    = useState('')
-  const [txHash,    setTxHash]    = useState('')
-  const [inOpen,    setInOpen]    = useState(false)
-  const [outOpen,   setOutOpen]   = useState(false)
+  const [tokenIn,  setTokenIn]  = useState(TOKENS[0])
+  const [tokenOut, setTokenOut] = useState(TOKENS[1])
+  const [amountIn, setAmountIn] = useState('')
+  const [status,   setStatus]   = useState<Status>('idle')
+  const [estimate, setEstimate] = useState<Estimate | null>(null)
+  const [errMsg,   setErrMsg]   = useState('')
+  const [txHash,   setTxHash]   = useState('')
+  const [inOpen,   setInOpen]   = useState(false)
+  const [outOpen,  setOutOpen]  = useState(false)
 
   const isWrongChain = !!address && chainId !== arcTestnet.id
   const isPending    = status === 'swapping' || status === 'estimating'
 
-  const { data: balData } = useBalance({
-    address, chainId: arcTestnet.id,
-  })
-  const balFloat = balData ? Number(balData.value) / Math.pow(10, balData.decimals) : 0
-  const balStr   = balFloat > 0 ? balFloat.toFixed(4) : '0'
+  // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
+  useEffect(() => { patchCircleFetch() }, [])
 
   // Auto-quote
   useEffect(() => {
     if (!address || !amountIn || parseFloat(amountIn) <= 0) { setEstimate(null); return }
     const t = setTimeout(() => handleEstimate(), 600)
     return () => clearTimeout(t)
-  }, [amountIn, tokenIn.symbol, tokenOut.symbol, address]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [amountIn, tokenIn.symbol, tokenOut.symbol, address]) // eslint-disable-line
 
   const handleEstimate = useCallback(async () => {
     if (!address || !amountIn || parseFloat(amountIn) <= 0) return
@@ -59,7 +57,7 @@ export default function SwapPage() {
       const res = await fetch('/api/swap-quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tokenIn: tokenIn.symbol, tokenOut: tokenOut.symbol, amountIn, userAddress: address }),
+        body: JSON.stringify({ tokenIn: tokenIn.symbol, tokenOut: tokenOut.symbol, amountIn }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Quote failed')
@@ -79,10 +77,9 @@ export default function SwapPage() {
       const kitKey = process.env.NEXT_PUBLIC_KIT_KEY
       if (!kitKey) throw new Error('KIT_KEY not configured')
 
-      const kit     = new AppKit()
+      // getAdapter() her işlem öncesi çağrılmalı
       const adapter = await getAdapter()
-
-      const result = await kit.swap({
+      const result  = await new AppKit().swap({
         from:     { adapter, chain: 'Arc_Testnet' },
         tokenIn:  tokenIn.symbol,
         tokenOut: tokenOut.symbol,
@@ -99,11 +96,7 @@ export default function SwapPage() {
       setTimeout(() => setStatus('idle'), 4000)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Swap failed'
-      if (msg.toLowerCase().includes('rejected') || msg.includes('4001')) {
-        setErrMsg('Transaction rejected.')
-      } else {
-        setErrMsg(msg)
-      }
+      setErrMsg(msg.toLowerCase().includes('rejected') ? 'Transaction rejected.' : msg)
       setStatus('error')
       setTimeout(() => setStatus('idle'), 3000)
     }
@@ -125,14 +118,12 @@ export default function SwapPage() {
           <div className="rounded-xl border p-3" style={{ background: 'var(--bg-input)', borderColor: 'var(--border)' }}>
             <div className="flex justify-between mb-2">
               <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>You pay</span>
-              {address && <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Balance: <b style={{ color: 'var(--text-primary)' }}>{balStr}</b></span>}
             </div>
             <div className="flex items-center gap-2">
               <input type="number" placeholder="0.0" value={amountIn}
                 onChange={e => { setAmountIn(e.target.value); setEstimate(null); setErrMsg('') }}
                 className="flex-1 bg-transparent text-xl font-bold outline-none min-w-0 w-0"
                 style={{ color: 'var(--text-primary)' }} />
-              {/* Token selector in */}
               <div className="relative">
                 <button onClick={() => setInOpen(o => !o)}
                   className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold border"
@@ -178,10 +169,10 @@ export default function SwapPage() {
             </div>
             <div className="flex items-center gap-2">
               <div className="flex-1 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {status === 'estimating' ? <span className="animate-pulse text-sm" style={{ color: 'var(--text-secondary)' }}>Getting quote...</span>
+                {status === 'estimating'
+                  ? <span className="animate-pulse text-sm" style={{ color: 'var(--text-secondary)' }}>Getting quote...</span>
                   : estimate?.estimatedOutput?.amount ?? '0.0'}
               </div>
-              {/* Token selector out */}
               <div className="relative">
                 <button onClick={() => setOutOpen(o => !o)}
                   className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold border"
@@ -223,12 +214,6 @@ export default function SwapPage() {
                 <span style={{ color: 'var(--text-secondary)' }}>Min received</span>
                 <span style={{ color: 'var(--text-primary)' }}>{estimate.stopLimit.amount} {tokenOut.symbol}</span>
               </div>
-              {estimate.fees?.map(f => (
-                <div key={f.type} className="flex justify-between">
-                  <span style={{ color: 'var(--text-secondary)' }}>{f.type} fee</span>
-                  <span style={{ color: 'var(--text-primary)' }}>{parseFloat(f.amount).toFixed(4)} {f.token}</span>
-                </div>
-              ))}
             </div>
           )}
 
@@ -259,11 +244,12 @@ export default function SwapPage() {
               Switch to Arc Testnet
             </button>
           ) : (
-            <button onClick={estimate ? handleSwap : handleEstimate} disabled={isPending || !amountIn || parseFloat(amountIn) <= 0}
+            <button onClick={estimate ? handleSwap : handleEstimate}
+              disabled={isPending || !amountIn || parseFloat(amountIn) <= 0}
               className="w-full py-3 rounded-xl font-bold text-sm transition-all disabled:cursor-not-allowed"
               style={{
                 background: (amountIn && parseFloat(amountIn) > 0) ? 'var(--purple)' : 'var(--bg-input)',
-                color:      (amountIn && parseFloat(amountIn) > 0) ? '#fff'          : 'var(--text-secondary)',
+                color:      (amountIn && parseFloat(amountIn) > 0) ? '#fff' : 'var(--text-secondary)',
               }}>
               {status === 'estimating' ? '⏳ Getting quote...'
                 : status === 'swapping' ? '⏳ Swapping...'
