@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useAccount, useSwitchChain, useBalance } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { isAddress } from 'viem'
 import AppLayout from '@/app/components/AppLayout'
 import { arcTestnet, USDC_ADDRESS, EURC_ADDRESS, CIRBTC_ADDRESS } from '@/lib/arc'
@@ -27,14 +27,22 @@ export default function SendPage() {
   const [errMsg,    setErrMsg]    = useState('')
   const [txHash,    setTxHash]    = useState('')
   const [tokenOpen, setTokenOpen] = useState(false)
+  const [balStr,    setBalStr]    = useState('0')
 
-  const { data: balData } = useBalance({
-    address,
-    chainId: arcTestnet.id,
-    token:   token.address as `0x${string}`,
-  })
-  const balFloat = balData ? Number(balData.value) / Math.pow(10, token.decimals) : 0
-  const balStr   = balFloat > 0 ? balFloat.toFixed(6).replace(/\.?0+$/, '') : '0'
+  // Balance — ArcScan API
+  useEffect(() => {
+    if (!address) return
+    async function fetchBal() {
+      try {
+        const res  = await fetch(`https://testnet.arcscan.app/api/v2/addresses/${address}/token-balances`)
+        const data = await res.json()
+        const item = (data as { token: { address_hash: string }; value: string }[])
+          .find(t => t.token?.address_hash?.toLowerCase() === token.address.toLowerCase())
+        setBalStr(item ? (parseFloat(item.value) / Math.pow(10, token.decimals)).toFixed(6).replace(/\.?0+$/, '') : '0')
+      } catch { setBalStr('0') }
+    }
+    fetchBal()
+  }, [address, token.address, token.decimals])
 
   const isWrongChain    = !!address && chainId !== arcTestnet.id
   const isPending       = status === 'sending'

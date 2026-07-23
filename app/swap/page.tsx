@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useAccount, useSwitchChain, useBalance } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import AppLayout from '@/app/components/AppLayout'
 import { arcTestnet, USDC_ADDRESS, EURC_ADDRESS, CIRBTC_ADDRESS } from '@/lib/arc'
 import { saveTransaction } from '@/lib/supabase'
@@ -40,11 +40,30 @@ export default function SwapPage() {
   const isWrongChain = !!address && chainId !== arcTestnet.id
   const isPending    = status === 'swapping' || status === 'estimating'
 
-  // Token balances
-  const { data: balIn }  = useBalance({ address, chainId: arcTestnet.id, token: tokenIn.address  as `0x${string}` })
-  const { data: balOut } = useBalance({ address, chainId: arcTestnet.id, token: tokenOut.address as `0x${string}` })
-  const balInStr  = balIn  ? parseFloat(balIn.formatted).toFixed(4)  : '0'
-  const balOutStr = balOut ? parseFloat(balOut.formatted).toFixed(4) : '0'
+  // Token balances — ArcScan API üzerinden oku
+  const [balInStr,  setBalInStr]  = useState('0')
+  const [balOutStr, setBalOutStr] = useState('0')
+
+  useEffect(() => {
+    if (!address) return
+    const BLOCKSCOUT = 'https://testnet.arcscan.app/api/v2'
+    async function fetchBal(tokenAddr: string, decimals: number, setter: (v: string) => void) {
+      try {
+        const res  = await fetch(`${BLOCKSCOUT}/addresses/${address}/token-balances`)
+        const data = await res.json()
+        const item = (data as { token: { address_hash: string }; value: string }[])
+          .find(t => t.token?.address_hash?.toLowerCase() === tokenAddr.toLowerCase())
+        if (item) {
+          const val = (parseFloat(item.value) / Math.pow(10, decimals)).toFixed(4)
+          setter(val)
+        } else {
+          setter('0')
+        }
+      } catch { setter('0') }
+    }
+    fetchBal(tokenIn.address,  tokenIn.decimals,  setBalInStr)
+    fetchBal(tokenOut.address, tokenOut.decimals, setBalOutStr)
+  }, [address, tokenIn.address, tokenOut.address, tokenIn.decimals, tokenOut.decimals])
 
   // KRİTİK: patchCircleFetch CORS proxy'sini aktif et
   useEffect(() => { patchCircleFetch() }, [])
@@ -162,9 +181,9 @@ export default function SwapPage() {
                 {[25, 50, 75, 100].map(pct => (
                   <button key={pct}
                     onClick={() => {
-                      const bal = balIn ? parseFloat(balIn.formatted) : 0
+                      const bal = parseFloat(balInStr)
                       const val = pct === 100
-                        ? bal.toFixed(6).replace(/\.?0+$/, '')
+                        ? balInStr
                         : (bal * pct / 100).toFixed(6).replace(/\.?0+$/, '')
                       setAmountIn(val)
                       setEstimate(null)
